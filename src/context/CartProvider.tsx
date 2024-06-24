@@ -72,7 +72,27 @@ const reducer = (state: CartStateType, action: ReducerAction): CartStateType => 
     }
 
     case ACTION_TYPE.QUANTITY: {
+      if (!action.payload) throw new Error("action payload missing")
 
+      const { sku, quantity } = action.payload
+
+      // Busco al producto que quiero agregar para aumentarle la cantidad (si es que existe)
+      const itemExists: CartItemType | undefined = state.cart.find(item => item.sku === sku)
+
+      if(!itemExists) throw new Error("Item must exist in order to update quantity")
+      
+      const updatedItem: CartItemType = {
+        ...itemExists,
+        quantity
+      }
+
+      // Me da los productos diferentes al que agrego
+      const filteredCart: CartItemType[] = state.cart.filter(item => item.sku !== sku)
+
+      return {
+        ...state,
+        cart: [...filteredCart, updatedItem]
+      }
     }
 
     case ACTION_TYPE.SUBMIT: {

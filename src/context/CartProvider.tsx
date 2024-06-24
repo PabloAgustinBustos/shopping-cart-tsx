@@ -57,7 +57,18 @@ const reducer = (state: CartStateType, action: ReducerAction): CartStateType => 
     }
 
     case ACTION_TYPE.REMOVE: {
+      if (!action.payload) throw new Error("action payload missing")
 
+      const { sku } = action.payload
+
+      // Me da los productos diferentes al que agrego
+      const filteredCart: CartItemType[] = state.cart.filter(item => item.sku !== sku)
+
+      return {
+        ...state,
+
+        cart: [...filteredCart]
+      }
     }
 
     case ACTION_TYPE.QUANTITY: {
